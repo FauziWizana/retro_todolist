@@ -3,11 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't require authentication
-  const publicRoutes = ["/login", "/signup", "/api/auth"];
-  
-  // Check if the current path is a public route
-  const isPublicRoute = publicRoutes.some(route => 
+  // All API routes handle their own auth — never redirect them
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
+  // Public page routes that don't require authentication
+  const publicRoutes = ["/login", "/signup"];
+
+  const isPublicRoute = publicRoutes.some(route =>
     pathname.startsWith(route)
   );
 
@@ -19,7 +23,6 @@ export async function proxy(request: NextRequest) {
   const sessionCookie = request.cookies.get("better-auth.session_token");
 
   if (!sessionCookie) {
-    // Redirect to login if no session
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
@@ -29,7 +32,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all paths except static files and api routes (except protected ones)
     "/((?!_next/static|_next/image|favicon.ico|.*\\..*$).*)",
   ],
 };
