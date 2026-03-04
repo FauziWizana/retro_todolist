@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { column } from "@/lib/db/schema";
+import { columns } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
 
@@ -29,9 +29,9 @@ export async function PATCH(
     if (position !== undefined) updateData.position = position;
 
     const result = await db
-      .update(column)
+      .update(columns)
       .set(updateData)
-      .where(and(eq(column.id, id), eq(column.userId, session.user.id)))
+      .where(and(eq(columns.id, id), eq(columns.userId, session.user.id)))
       .returning();
 
     if (result.length === 0) {
@@ -40,8 +40,8 @@ export async function PATCH(
 
     const updated = await db
       .select()
-      .from(column)
-      .where(eq(column.id, id))
+      .from(columns)
+      .where(eq(columns.id, id))
       .limit(1);
 
     return NextResponse.json(updated[0]);
@@ -68,8 +68,8 @@ export async function DELETE(
     const { id } = await params;
 
     const result = await db
-      .delete(column)
-      .where(and(eq(column.id, id), eq(column.userId, session.user.id)))
+      .delete(columns)
+      .where(and(eq(columns.id, id), eq(columns.userId, session.user.id)))
       .returning();
 
     if (result.length === 0) {

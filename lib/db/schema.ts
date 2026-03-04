@@ -52,7 +52,7 @@ export const verification = pgTable("verification", {
 });
 
 // To Do List tables
-export const column = pgTable("column", {
+export const columns = pgTable("columns", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   color: text("color").notNull().default("#ec4899"),
@@ -71,7 +71,7 @@ export const card = pgTable("card", {
   position: integer("position").notNull().default(0),
   columnId: text("column_id")
     .notNull()
-    .references(() => column.id, { onDelete: "cascade" }),
+    .references(() => columns.id, { onDelete: "cascade" }),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),

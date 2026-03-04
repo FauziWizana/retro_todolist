@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { card, column } from "@/lib/db/schema";
+import { card, columns } from "@/lib/db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { randomUUID } from "crypto";
@@ -64,8 +64,8 @@ export async function POST(request: NextRequest) {
     // Verify column belongs to user
     const columnExists = await db
       .select()
-      .from(column)
-      .where(and(eq(column.id, columnId), eq(column.userId, session.user.id)))
+      .from(columns)
+      .where(and(eq(columns.id, columnId), eq(columns.userId, session.user.id)))
       .limit(1);
 
     if (columnExists.length === 0) {

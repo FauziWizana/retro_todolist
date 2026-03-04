@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { column } from "@/lib/db/schema";
+import { columns } from "@/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { randomUUID } from "crypto";
@@ -17,13 +17,13 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const columns = await db
+    const columns_list = await db
       .select()
-      .from(column)
-      .where(eq(column.userId, session.user.id))
-      .orderBy(asc(column.position));
+      .from(columns)
+      .where(eq(columns.userId, session.user.id))
+      .orderBy(asc(columns.position));
 
-    return NextResponse.json(columns);
+    return NextResponse.json(columns_list);
   } catch (error) {
     console.error("Error fetching columns:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       updatedAt: now,
     };
 
-    await db.insert(column).values(newColumn);
+    await db.insert(columns).values(newColumn);
 
     return NextResponse.json(newColumn, { status: 201 });
   } catch (error) {

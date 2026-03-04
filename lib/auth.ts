@@ -59,7 +59,7 @@ export const auth = betterAuth({
             updatedAt: now,
           }));
 
-          await db.insert(schema.column).values(columnsToInsert);
+          await db.insert(schema.columns).values(columnsToInsert);
         },
       },
     },
