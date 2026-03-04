@@ -32,9 +32,10 @@ export async function PATCH(
     const result = await db
       .update(card)
       .set(updateData)
-      .where(and(eq(card.id, id), eq(card.userId, session.user.id)));
+      .where(and(eq(card.id, id), eq(card.userId, session.user.id)))
+      .returning();
 
-    if (result.changes === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: "Card not found" }, { status: 404 });
     }
 
@@ -69,9 +70,10 @@ export async function DELETE(
 
     const result = await db
       .delete(card)
-      .where(and(eq(card.id, id), eq(card.userId, session.user.id)));
+      .where(and(eq(card.id, id), eq(card.userId, session.user.id)))
+      .returning();
 
-    if (result.changes === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: "Card not found" }, { status: 404 });
     }
 

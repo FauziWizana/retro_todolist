@@ -31,9 +31,10 @@ export async function PATCH(
     const result = await db
       .update(column)
       .set(updateData)
-      .where(and(eq(column.id, id), eq(column.userId, session.user.id)));
+      .where(and(eq(column.id, id), eq(column.userId, session.user.id)))
+      .returning();
 
-    if (result.changes === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: "Column not found" }, { status: 404 });
     }
 
@@ -68,9 +69,10 @@ export async function DELETE(
 
     const result = await db
       .delete(column)
-      .where(and(eq(column.id, id), eq(column.userId, session.user.id)));
+      .where(and(eq(column.id, id), eq(column.userId, session.user.id)))
+      .returning();
 
-    if (result.changes === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: "Column not found" }, { status: 404 });
     }
 
