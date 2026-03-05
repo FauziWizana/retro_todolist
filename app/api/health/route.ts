@@ -13,10 +13,16 @@ export async function GET() {
   };
 
   try {
-    await db.execute(sql`SELECT 1`);
+    const result = await db.execute(sql`SELECT 1 as ok`);
     checks.db = "connected";
-  } catch (err) {
-    checks.db = "FAILED: " + String(err);
+    checks.db_result = result;
+  } catch (err: unknown) {
+    const error = err as Error & { code?: string; detail?: string; hint?: string };
+    checks.db = "FAILED";
+    checks.db_error = error?.message;
+    checks.db_code = error?.code;
+    checks.db_detail = error?.detail;
+    checks.db_hint = error?.hint;
   }
 
   return NextResponse.json(checks);
