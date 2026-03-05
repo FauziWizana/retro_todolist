@@ -1,14 +1,11 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "./schema";
 
-// Strip query params from URL — we set them in code instead
-const rawUrl = process.env.DATABASE_URL!;
-const connectionString = rawUrl.split("?")[0];
-
-const client = postgres(connectionString, {
-  prepare: false, // required for pgbouncer / transaction pooler
-  max: 1,
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
+  max: 1,
 });
-export const db = drizzle(client, { schema });
+
+export const db = drizzle(pool, { schema });
